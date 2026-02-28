@@ -6,9 +6,8 @@ This module provides MCP tools for interacting with Google Sheets API.
 
 import logging
 import asyncio
-import json
 import copy
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from auth.service_decorator import require_google_service
 from core.server import server
@@ -288,7 +287,7 @@ async def modify_sheet_values(
     user_google_email: str,
     spreadsheet_id: str,
     range_name: str,
-    values: Optional[Union[str, List[List[str]]]] = None,
+    values: Optional[List[List[str]]] = None,
     value_input_option: str = "USER_ENTERED",
     clear_values: bool = False,
 ) -> str:
@@ -299,7 +298,7 @@ async def modify_sheet_values(
         user_google_email (str): The user's Google email address. Required.
         spreadsheet_id (str): The ID of the spreadsheet. Required.
         range_name (str): The range to modify (e.g., "Sheet1!A1:D10", "A1:D10"). Required.
-        values (Optional[Union[str, List[List[str]]]]): 2D array of values to write/update. Can be a JSON string or Python list. Required unless clear_values=True.
+        values (Optional[List[List[str]]]): 2D array of values to write/update. Can be a JSON string or Python list. Required unless clear_values=True.
         value_input_option (str): How to interpret input values ("RAW" or "USER_ENTERED"). Defaults to "USER_ENTERED".
         clear_values (bool): If True, clears the range instead of writing values. Defaults to False.
 
@@ -310,29 +309,6 @@ async def modify_sheet_values(
     logger.info(
         f"[modify_sheet_values] Invoked. Operation: {operation}, Email: '{user_google_email}', Spreadsheet: {spreadsheet_id}, Range: {range_name}"
     )
-
-    # Parse values if it's a JSON string (MCP passes parameters as JSON strings)
-    if values is not None and isinstance(values, str):
-        try:
-            parsed_values = json.loads(values)
-            if not isinstance(parsed_values, list):
-                raise ValueError(
-                    f"Values must be a list, got {type(parsed_values).__name__}"
-                )
-            # Validate it's a list of lists
-            for i, row in enumerate(parsed_values):
-                if not isinstance(row, list):
-                    raise ValueError(
-                        f"Row {i} must be a list, got {type(row).__name__}"
-                    )
-            values = parsed_values
-            logger.info(
-                f"[modify_sheet_values] Parsed JSON string to Python list with {len(values)} rows"
-            )
-        except json.JSONDecodeError as e:
-            raise UserInputError(f"Invalid JSON format for values: {e}")
-        except ValueError as e:
-            raise UserInputError(f"Invalid values structure: {e}")
 
     if not clear_values and not values:
         raise UserInputError(
@@ -737,11 +713,11 @@ async def add_conditional_formatting(
     spreadsheet_id: str,
     range_name: str,
     condition_type: str,
-    condition_values: Optional[Union[str, List[Union[str, int, float]]]] = None,
+    condition_values: Optional[List[str]] = None,
     background_color: Optional[str] = None,
     text_color: Optional[str] = None,
     rule_index: Optional[int] = None,
-    gradient_points: Optional[Union[str, List[dict]]] = None,
+    gradient_points: Optional[List[dict]] = None,
 ) -> str:
     """
     Adds a conditional formatting rule to a range.
@@ -751,11 +727,11 @@ async def add_conditional_formatting(
         spreadsheet_id (str): The ID of the spreadsheet. Required.
         range_name (str): A1-style range (optionally with sheet name). Required.
         condition_type (str): Sheets condition type (e.g., NUMBER_GREATER, TEXT_CONTAINS, DATE_BEFORE, CUSTOM_FORMULA).
-        condition_values (Optional[Union[str, List[Union[str, int, float]]]]): Values for the condition; accepts a list or a JSON string representing a list. Depends on condition_type.
+        condition_values (Optional[List[str]]): Values for the condition; accepts a list or a JSON string representing a list. Depends on condition_type.
         background_color (Optional[str]): Hex background color to apply when condition matches.
         text_color (Optional[str]): Hex text color to apply when condition matches.
         rule_index (Optional[int]): Optional position to insert the rule (0-based) within the sheet's rules.
-        gradient_points (Optional[Union[str, List[dict]]]): List (or JSON list) of gradient points for a color scale. If provided, a gradient rule is created and boolean parameters are ignored.
+        gradient_points (Optional[List[dict]]): List (or JSON list) of gradient points for a color scale. If provided, a gradient rule is created and boolean parameters are ignored.
 
     Returns:
         str: Confirmation of the added rule.
@@ -862,11 +838,11 @@ async def update_conditional_formatting(
     rule_index: int,
     range_name: Optional[str] = None,
     condition_type: Optional[str] = None,
-    condition_values: Optional[Union[str, List[Union[str, int, float]]]] = None,
+    condition_values: Optional[List[str]] = None,
     background_color: Optional[str] = None,
     text_color: Optional[str] = None,
     sheet_name: Optional[str] = None,
-    gradient_points: Optional[Union[str, List[dict]]] = None,
+    gradient_points: Optional[List[dict]] = None,
 ) -> str:
     """
     Updates an existing conditional formatting rule by index on a sheet.
@@ -877,11 +853,11 @@ async def update_conditional_formatting(
         range_name (Optional[str]): A1-style range to apply the updated rule (optionally with sheet name). If omitted, existing ranges are preserved.
         rule_index (int): Index of the rule to update (0-based).
         condition_type (Optional[str]): Sheets condition type. If omitted, the existing rule's type is preserved.
-        condition_values (Optional[Union[str, List[Union[str, int, float]]]]): Values for the condition.
+        condition_values (Optional[List[str]]): Values for the condition.
         background_color (Optional[str]): Hex background color when condition matches.
         text_color (Optional[str]): Hex text color when condition matches.
         sheet_name (Optional[str]): Sheet name to locate the rule when range_name is omitted. Defaults to first sheet.
-        gradient_points (Optional[Union[str, List[dict]]]): If provided, updates the rule to a gradient color scale using these points.
+        gradient_points (Optional[List[dict]]): If provided, updates the rule to a gradient color scale using these points.
 
     Returns:
         str: Confirmation of the updated rule and the current rule state.
