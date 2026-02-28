@@ -10,7 +10,7 @@ import asyncio
 import re
 import uuid
 import json
-from typing import List, Optional, Dict, Any, Union
+from typing import List, Optional, Dict, Any
 
 from googleapiclient.errors import HttpError
 from googleapiclient.discovery import build
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_reminders_json(
-    reminders_input: Optional[Union[str, List[Dict[str, Any]]]], function_name: str
+    reminders_input: Optional[List[dict]], function_name: str
 ) -> List[Dict[str, Any]]:
     """
     Parse reminders from JSON string or list object and validate them.
@@ -550,7 +550,7 @@ async def create_event(
     timezone: Optional[str] = None,
     attachments: Optional[List[str]] = None,
     add_google_meet: bool = False,
-    reminders: Optional[Union[str, List[Dict[str, Any]]]] = None,
+    reminders: Optional[List[dict]] = None,
     use_default_reminders: bool = True,
     transparency: Optional[str] = None,
     visibility: Optional[str] = None,
@@ -573,7 +573,7 @@ async def create_event(
         timezone (Optional[str]): Timezone (e.g., "America/New_York").
         attachments (Optional[List[str]]): List of Google Drive file URLs or IDs to attach to the event.
         add_google_meet (bool): Whether to add a Google Meet video conference to the event. Defaults to False.
-        reminders (Optional[Union[str, List[Dict[str, Any]]]]): JSON string or list of reminder objects. Each should have 'method' ("popup" or "email") and 'minutes' (0-40320). Max 5 reminders. Example: '[{"method": "popup", "minutes": 15}]' or [{"method": "popup", "minutes": 15}]
+        reminders (Optional[List[dict]]): JSON string or list of reminder objects. Each should have 'method' ("popup" or "email") and 'minutes' (0-40320). Max 5 reminders. Example: '[{"method": "popup", "minutes": 15}]' or [{"method": "popup", "minutes": 15}]
         use_default_reminders (bool): Whether to use calendar's default reminders. If False, uses custom reminders. Defaults to True.
         transparency (Optional[str]): Event transparency for busy/free status. "opaque" shows as Busy (default), "transparent" shows as Available/Free. Defaults to None (uses Google Calendar default).
         visibility (Optional[str]): Event visibility. "default" uses calendar default, "public" is visible to all, "private" is visible only to attendees, "confidential" is same as private (legacy). Defaults to None (uses Google Calendar default).
@@ -781,7 +781,7 @@ async def create_event(
 
 
 def _normalize_attendees(
-    attendees: Optional[Union[List[str], List[Dict[str, Any]]]],
+    attendees: Optional[List[dict]],
 ) -> Optional[List[Dict[str, Any]]]:
     """
     Normalize attendees input to list of attendee objects.
@@ -822,10 +822,10 @@ async def modify_event(
     end_time: Optional[str] = None,
     description: Optional[str] = None,
     location: Optional[str] = None,
-    attendees: Optional[Union[List[str], List[Dict[str, Any]]]] = None,
+    attendees: Optional[List[dict]] = None,
     timezone: Optional[str] = None,
     add_google_meet: Optional[bool] = None,
-    reminders: Optional[Union[str, List[Dict[str, Any]]]] = None,
+    reminders: Optional[List[dict]] = None,
     use_default_reminders: Optional[bool] = None,
     transparency: Optional[str] = None,
     visibility: Optional[str] = None,
@@ -846,10 +846,10 @@ async def modify_event(
         end_time (Optional[str]): New end time (RFC3339, e.g., "2023-10-27T11:00:00-07:00" or "2023-10-28" for all-day).
         description (Optional[str]): New event description.
         location (Optional[str]): New event location.
-        attendees (Optional[Union[List[str], List[Dict[str, Any]]]]): Attendees as email strings or objects with metadata. Supports: ["email@example.com"] or [{"email": "email@example.com", "responseStatus": "accepted", "organizer": true, "optional": true}]. When using objects, existing metadata (responseStatus, organizer, optional) is preserved. New attendees default to responseStatus="needsAction".
+        attendees (Optional[List[dict]]): Attendees as email strings or objects with metadata. Supports: ["email@example.com"] or [{"email": "email@example.com", "responseStatus": "accepted", "organizer": true, "optional": true}]. When using objects, existing metadata (responseStatus, organizer, optional) is preserved. New attendees default to responseStatus="needsAction".
         timezone (Optional[str]): New timezone (e.g., "America/New_York").
         add_google_meet (Optional[bool]): Whether to add or remove Google Meet video conference. If True, adds Google Meet; if False, removes it; if None, leaves unchanged.
-        reminders (Optional[Union[str, List[Dict[str, Any]]]]): JSON string or list of reminder objects to replace existing reminders. Each should have 'method' ("popup" or "email") and 'minutes' (0-40320). Max 5 reminders. Example: '[{"method": "popup", "minutes": 15}]' or [{"method": "popup", "minutes": 15}]
+        reminders (Optional[List[dict]]): JSON string or list of reminder objects to replace existing reminders. Each should have 'method' ("popup" or "email") and 'minutes' (0-40320). Max 5 reminders. Example: '[{"method": "popup", "minutes": 15}]' or [{"method": "popup", "minutes": 15}]
         use_default_reminders (Optional[bool]): Whether to use calendar's default reminders. If specified, overrides current reminder settings.
         transparency (Optional[str]): Event transparency for busy/free status. "opaque" shows as Busy, "transparent" shows as Available/Free. If None, preserves existing transparency setting.
         visibility (Optional[str]): Event visibility. "default" uses calendar default, "public" is visible to all, "private" is visible only to attendees, "confidential" is same as private (legacy). If None, preserves existing visibility setting.

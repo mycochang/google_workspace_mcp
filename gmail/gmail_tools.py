@@ -10,7 +10,7 @@ import base64
 import ssl
 import mimetypes
 from html.parser import HTMLParser
-from typing import Annotated, Optional, List, Dict, Literal, Any
+from typing import Annotated, Optional, List, Dict, Literal
 
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -172,7 +172,7 @@ def _format_body_content(text_body: str, html_body: str) -> str:
         return "[No readable content found]"
 
 
-def _extract_attachments(payload: dict) -> List[Dict[str, Any]]:
+def _extract_attachments(payload: dict) -> List[dict]:
     """
     Extract attachment metadata from a Gmail message payload.
 
@@ -1828,13 +1828,13 @@ async def create_gmail_filter(
     service,
     user_google_email: str,
     criteria: Annotated[
-        Dict[str, Any],
+        dict,
         Field(
             description="Filter criteria object as defined in the Gmail API.",
         ),
     ],
     action: Annotated[
-        Dict[str, Any],
+        dict,
         Field(
             description="Filter action object as defined in the Gmail API.",
         ),
@@ -1845,8 +1845,8 @@ async def create_gmail_filter(
 
     Args:
         user_google_email (str): The user's Google email address. Required.
-        criteria (Dict[str, Any]): Criteria for matching messages.
-        action (Dict[str, Any]): Actions to apply to matched messages.
+        criteria (dict): Criteria for matching messages.
+        action (dict): Actions to apply to matched messages.
 
     Returns:
         str: Confirmation message with the created filter ID.

@@ -36,3 +36,25 @@ ecosystem.config.cjs
 
 # ---- Agent instructions (not for distribution) -------------------------
 .github/instructions/
+
+# ---- Context & Documentation ----
+context/
+AGENTS.md
+sync_upstream.sh
+
+# Ignored from custom fork
+tmp/
+*.pdf
+*.txt
+server.log
+AGENTS.md
+sync_upstream.sh
+emissary_search.py
+read_docx.py
+search_script.py
+get_provider.py
+get_server_props.py
+patch_helpers.py
+patch_test.py
+test_gemini_schema.py.disabled
+test_modifier.py.disabled
