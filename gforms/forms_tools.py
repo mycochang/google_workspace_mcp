@@ -6,7 +6,7 @@ This module provides MCP tools for interacting with Google Forms API.
 
 import logging
 import asyncio
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Any
 
 
 from auth.service_decorator import require_google_service
@@ -40,7 +40,7 @@ async def create_form(
     """
     logger.info(f"[create_form] Invoked. Email: '{user_google_email}', Title: {title}")
 
-    form_body: Dict[str, Any] = {"info": {"title": title}}
+    form_body: dict = {"info": {"title": title}}
 
     if description:
         form_body["info"]["description"] = description
@@ -289,7 +289,7 @@ async def list_form_responses(
 async def _batch_update_form_impl(
     service: Any,
     form_id: str,
-    requests: List[Dict[str, Any]],
+    requests: List[dict],
 ) -> str:
     """Internal implementation for batch_update_form.
 
@@ -344,7 +344,7 @@ async def batch_update_form(
     service,
     user_google_email: str,
     form_id: str,
-    requests: List[Dict[str, Any]],
+    requests: List[dict],
 ) -> str:
     """
     Apply batch updates to a Google Form.
@@ -356,7 +356,7 @@ async def batch_update_form(
     Args:
         user_google_email (str): The user's Google email address. Required.
         form_id (str): The ID of the form to update.
-        requests (List[Dict[str, Any]]): List of update requests to apply.
+        requests (List[dict]): List of update requests to apply.
             Supported request types:
             - createItem: Add a new question or content item
             - updateItem: Modify an existing item

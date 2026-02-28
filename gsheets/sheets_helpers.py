@@ -6,9 +6,8 @@ conditional formatting helpers.
 """
 
 import asyncio
-import json
 import re
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from core.utils import UserInputError
 
@@ -730,61 +729,43 @@ def _select_sheet(sheets: List[dict], sheet_name: Optional[str]) -> dict:
 
 
 def _parse_condition_values(
-    condition_values: Optional[Union[str, List[Union[str, int, float]]]],
-) -> Optional[List[Union[str, int, float]]]:
+    condition_values: Optional[List[str]],
+) -> Optional[List[str]]:
     """
     Normalize and validate condition_values into a list of strings/numbers.
     """
-    parsed = condition_values
-    if isinstance(parsed, str):
-        try:
-            parsed = json.loads(parsed)
-        except json.JSONDecodeError as exc:
-            raise UserInputError(
-                "condition_values must be a list or a JSON-encoded list (e.g., '[\"=$B2>1000\"]')."
-            ) from exc
+    if condition_values is not None and not isinstance(condition_values, list):
+        return [str(condition_values)]
 
-    if parsed is not None and not isinstance(parsed, list):
-        parsed = [parsed]
-
-    if parsed:
-        for idx, val in enumerate(parsed):
-            if not isinstance(val, (str, int, float)):
-                raise UserInputError(
-                    f"condition_values[{idx}] must be a string or number, got {type(val).__name__}."
-                )
-
-    return parsed
+    if condition_values:
+        for idx, val in enumerate(condition_values):
+            if not isinstance(val, str):
+                if isinstance(val, (int, float)):
+                    condition_values[idx] = str(val)
+                else:
+                    raise UserInputError(
+                        f"condition_values[{idx}] must be a string, got {type(val).__name__}."
+                    )
+    return condition_values
 
 
 def _parse_gradient_points(
-    gradient_points: Optional[Union[str, List[dict]]],
+    gradient_points: Optional[List[dict]],
 ) -> Optional[List[dict]]:
     """
     Normalize gradient points into a list of dicts with type/value/color.
-    Each point must have a 'type' (MIN, MAX, NUMBER, PERCENT, PERCENTILE) and a color.
     """
     if gradient_points is None:
         return None
 
-    parsed = gradient_points
-    if isinstance(parsed, str):
-        try:
-            parsed = json.loads(parsed)
-        except json.JSONDecodeError as exc:
-            raise UserInputError(
-                "gradient_points must be a list or JSON-encoded list of points "
-                '(e.g., \'[{"type":"MIN","color":"#ffffff"}, {"type":"MAX","color":"#ff0000"}]\').'
-            ) from exc
-
-    if not isinstance(parsed, list):
+    if not isinstance(gradient_points, list):
         raise UserInputError("gradient_points must be a list of point objects.")
 
-    if len(parsed) < 2 or len(parsed) > 3:
+    if len(gradient_points) < 2 or len(gradient_points) > 3:
         raise UserInputError("Provide 2 or 3 gradient points (min/max or min/mid/max).")
 
     normalized_points: List[dict] = []
-    for idx, point in enumerate(parsed):
+    for idx, point in enumerate(gradient_points):
         if not isinstance(point, dict):
             raise UserInputError(
                 f"gradient_points[{idx}] must be an object with type/color."
@@ -815,7 +796,7 @@ def _parse_gradient_points(
 def _build_boolean_rule(
     ranges: List[dict],
     condition_type: str,
-    condition_values: Optional[List[Union[str, int, float]]],
+    condition_values: Optional[List[str]],
     background_color: Optional[str],
     text_color: Optional[str],
 ) -> tuple[dict, str]:

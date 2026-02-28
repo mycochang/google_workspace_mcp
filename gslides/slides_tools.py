@@ -6,7 +6,7 @@ This module provides MCP tools for interacting with Google Slides API.
 
 import logging
 import asyncio
-from typing import List, Dict, Any
+from typing import List
 
 
 from auth.service_decorator import require_google_service
@@ -154,7 +154,7 @@ async def batch_update_presentation(
     service,
     user_google_email: str,
     presentation_id: str,
-    requests: List[Dict[str, Any]],
+    requests: List[dict],
 ) -> str:
     """
     Apply batch updates to a Google Slides presentation.
@@ -162,7 +162,7 @@ async def batch_update_presentation(
     Args:
         user_google_email (str): The user's Google email address. Required.
         presentation_id (str): The ID of the presentation to update.
-        requests (List[Dict[str, Any]]): List of update requests to apply.
+        requests (List[dict]): List of update requests to apply.
 
     Returns:
         str: Details about the batch update operation results.

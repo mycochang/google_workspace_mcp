@@ -8,7 +8,7 @@ import logging
 import asyncio
 import io
 import re
-from typing import List, Dict, Any
+from typing import List, Any
 
 from googleapiclient.http import MediaIoBaseDownload, MediaIoBaseUpload
 
@@ -834,7 +834,7 @@ async def batch_update_doc(
     service: Any,
     user_google_email: str,
     document_id: str,
-    operations: List[Dict[str, Any]],
+    operations: List[dict],
 ) -> str:
     """
     Executes multiple document operations in a single atomic batch update.

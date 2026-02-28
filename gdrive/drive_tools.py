@@ -13,7 +13,7 @@ import ipaddress
 import socket
 from contextlib import asynccontextmanager
 
-from typing import AsyncIterator, Optional, List, Dict, Any
+from typing import AsyncIterator, Optional, List
 from tempfile import NamedTemporaryFile
 from urllib.parse import urljoin, urlparse, urlunparse
 from urllib.request import url2pathname
@@ -1823,7 +1823,7 @@ async def batch_share_drive_file(
     service,
     user_google_email: str,
     file_id: str,
-    recipients: List[Dict[str, Any]],
+    recipients: List[dict],
     send_notification: bool = True,
     email_message: Optional[str] = None,
 ) -> str:
