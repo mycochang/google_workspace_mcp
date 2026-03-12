@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_reminders_json(
-    reminders_input: Optional[Union[str, List[Dict[str, Any]]]], function_name: str
+    reminders_input: Optional[str], function_name: str
 ) -> List[Dict[str, Any]]:
     """
     Parse reminders from JSON string or list object and validate them.
@@ -554,7 +554,7 @@ async def _create_event_impl(
     timezone: Optional[str] = None,
     attachments: Optional[List[str]] = None,
     add_google_meet: bool = False,
-    reminders: Optional[Union[str, List[Dict[str, Any]]]] = None,
+    reminders: Optional[str] = None,
     use_default_reminders: bool = True,
     transparency: Optional[str] = None,
     visibility: Optional[str] = None,
@@ -760,7 +760,7 @@ async def _create_event_impl(
 
 
 def _normalize_attendees(
-    attendees: Optional[Union[List[str], List[Dict[str, Any]]]],
+    attendees: Optional[List[str]],
 ) -> Optional[List[Dict[str, Any]]]:
     """
     Normalize attendees input to list of attendee objects.
@@ -798,10 +798,10 @@ async def _modify_event_impl(
     end_time: Optional[str] = None,
     description: Optional[str] = None,
     location: Optional[str] = None,
-    attendees: Optional[Union[List[str], List[Dict[str, Any]]]] = None,
+    attendees: Optional[List[str]] = None,
     timezone: Optional[str] = None,
     add_google_meet: Optional[bool] = None,
-    reminders: Optional[Union[str, List[Dict[str, Any]]]] = None,
+    reminders: Optional[str] = None,
     use_default_reminders: Optional[bool] = None,
     transparency: Optional[str] = None,
     visibility: Optional[str] = None,
@@ -1092,11 +1092,11 @@ async def manage_event(
     calendar_id: str = "primary",
     description: Optional[str] = None,
     location: Optional[str] = None,
-    attendees: Optional[Union[List[str], List[Dict[str, Any]]]] = None,
+    attendees: Optional[List[str]] = None,
     timezone: Optional[str] = None,
     attachments: Optional[List[str]] = None,
     add_google_meet: Optional[bool] = None,
-    reminders: Optional[Union[str, List[Dict[str, Any]]]] = None,
+    reminders: Optional[str] = None,
     use_default_reminders: Optional[bool] = None,
     transparency: Optional[str] = None,
     visibility: Optional[str] = None,
@@ -1118,11 +1118,11 @@ async def manage_event(
         calendar_id (str): Calendar ID (default: 'primary').
         description (Optional[str]): Event description.
         location (Optional[str]): Event location.
-        attendees (Optional[Union[List[str], List[Dict[str, Any]]]]): Attendee email addresses or objects.
+        attendees (Optional[List[str]]): List of attendee email addresses as strings.
         timezone (Optional[str]): Timezone (e.g., "America/New_York").
         attachments (Optional[List[str]]): List of Google Drive file URLs or IDs to attach.
         add_google_meet (Optional[bool]): Whether to add/remove Google Meet.
-        reminders (Optional[Union[str, List[Dict[str, Any]]]]): Custom reminder objects.
+        reminders (Optional[str]): Custom reminder objects.
         use_default_reminders (Optional[bool]): Whether to use default reminders.
         transparency (Optional[str]): "opaque" (busy) or "transparent" (free).
         visibility (Optional[str]): "default", "public", "private", or "confidential".
